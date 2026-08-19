@@ -30,6 +30,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         return switch (args[0].toLowerCase()) {
             case "start" -> {
                 if (sender instanceof Player) {
+                    // Currently it is using the sender to do all commands.
+                    // We want to have hunter and runner assigned before the game actually start.
+                    // Check if there is at least one player as hunter and one player as runner.
+                    // Edge Case: Make sure the hunter isn't the same player as the runner
+                    // Create team using ./team join
                     Player player = (Player) sender;
                     boolean success = TeleportPlayer.notOceanSpawn(player, 950, 1050);
 
