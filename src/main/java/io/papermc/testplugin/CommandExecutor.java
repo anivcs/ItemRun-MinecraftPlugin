@@ -4,7 +4,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 import static org.bukkit.Bukkit.getLogger;
 import static org.bukkit.Bukkit.getName;
@@ -29,21 +32,32 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
         return switch (args[0].toLowerCase()) {
             case "start" -> {
-                if (sender instanceof Player) {
+                if (sender instanceof Player starter) {
                     // Currently it is using the sender to do all commands.
                     // We want to have hunter and runner assigned before the game actually start.
                     // Check if there is at least one player as hunter and one player as runner.
                     // Edge Case: Make sure the hunter isn't the same player as the runner
                     // Create team using ./team join
-                    Player player = (Player) sender;
-                    boolean success = TeleportPlayer.notOceanSpawn(player, 950, 1050);
 
-                    if (!success) {
-                        player.sendMessage(ChatColor.DARK_RED + "Could not find a safe location to spawn. Please try again!");
+                    if (! plugin.teams.validateTeams()) {
+                        starter.sendMessage(ChatColor.RED + "Error: At least one of the teams is empty or there is more than one runner.");
                         yield true;
                     }
-                    player.sendMessage(ChatColor.GREEN + "Game started!");
-                    StartItemRun startItemRun = new StartItemRun(player, player, plugin);
+                    Player runner = null;
+                    ArrayList<Player> hunters = new ArrayList<>();
+                    for (Player player : starter.getWorld().getPlayers()) {
+                        if (plugin.teams.contains(player, TeamName.HUNTERS) ) {
+                            hunters.add(player);
+                        }
+                        else if (plugin.teams.contains(player, TeamName.RUNNER)) {
+                            runner = player;
+                        }
+                        player.sendMessage(ChatColor.GREEN + "Game started!");
+                    }
+
+
+
+                    StartItemRun startItemRun = new StartItemRun(runner, hunters, plugin);
                     startItemRun.run();
 
 

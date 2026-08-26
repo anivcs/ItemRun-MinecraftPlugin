@@ -7,26 +7,46 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+
 
 public class StartItemRun {
     Player runner;
-    Player hunter;
+    List<Player> hunters;
     ItemRun plugin;
 
 
-    public StartItemRun(Player runner, Player hunter, ItemRun plugin) {
-        this.hunter = hunter;
+    public StartItemRun(Player runner, List<Player> hunters, ItemRun plugin) {
+        this.hunters = hunters;
         this.runner = runner;
         this.plugin = plugin;
+    }
+
+    private void teleportPlayers() {
+
+        boolean success = TeleportPlayer.notOceanSpawn(runner, 950, 1050);
+
+        if (!success) {
+            runner.sendMessage(ChatColor.DARK_RED + "Could not find a safe location to spawn. Starting in current location");
+            return;
+        }
+        for (Player hunter : hunters) {
+            TeleportPlayer.teleportPlayer(hunter, runner);
+        }
+
     }
 
     private void giveBlindness(LivingEntity player, int seconds) {
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, seconds * 20, 1));
     }
 
+
     private void runnerHeadstart(int seconds) {
-        this.giveBlindness(hunter, seconds);
-        plugin.freezer.freezePlayer(hunter, seconds);
+        for (Player hunter : hunters) {
+            this.giveBlindness(hunter, seconds);
+            plugin.freezer.freezePlayer(hunter, seconds);
+        }
+
 
     }
 
@@ -37,7 +57,10 @@ public class StartItemRun {
         runner.sendMessage(Component.text(ChatColor.RED + "You must find " + targetItem + "!"));
     }
 
+
+
     public void run() {
+        this.teleportPlayers();
         this.setTargetItemAndPlayer();
         this.runnerHeadstart(10);
 

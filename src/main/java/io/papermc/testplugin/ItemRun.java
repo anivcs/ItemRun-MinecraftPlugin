@@ -24,7 +24,7 @@ public class ItemRun extends JavaPlugin implements Listener {
     ItemListener itemDetector = new ItemListener(this);
     ItemGenerator itemGenerator = new ItemGenerator((ArrayList<String>) fetchItems("items.json"));
     private final ArrayList<Listener> listeners = new ArrayList<>(List.of(this, freezer, itemDetector));
-    List<Team> teams;
+    TeamsData teams;
 
     private List<String> fetchItems(String filename) {
         ItemsData itemsData = JsonParser.parseStream(this.getResource(filename), ItemsData.class);
@@ -56,7 +56,7 @@ public class ItemRun extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        Teams.deleteTeams(teams);
+        Teams.deleteTeams(teams.getTeams());
     }
 
 
