@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import org.bukkit.scoreboard.Team;
 
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class ItemRun extends JavaPlugin implements Listener {
     ItemListener itemDetector = new ItemListener(this);
     ItemGenerator itemGenerator = new ItemGenerator((ArrayList<String>) fetchItems("items.json"));
     private final ArrayList<Listener> listeners = new ArrayList<>(List.of(this, freezer, itemDetector));
+    TeamsData teams;
 
     private List<String> fetchItems(String filename) {
         ItemsData itemsData = JsonParser.parseStream(this.getResource(filename), ItemsData.class);
@@ -44,6 +45,7 @@ public class ItemRun extends JavaPlugin implements Listener {
     public void onEnable() {
         this.setupListeners(listeners);
         Objects.requireNonNull(this.getCommand("itemrun")).setExecutor(new CommandExecutor(this));
+        teams = Teams.createTeams();
         getServer().getPluginManager().registerEvents(new InventoryEvents(), this);
     }
 
@@ -78,6 +80,12 @@ public class ItemRun extends JavaPlugin implements Listener {
                         "Have fun!"
         ));
 
+
+    }
+
+    @Override
+    public void onDisable() {
+        Teams.deleteTeams(teams.getTeams());
     }
 
 

@@ -40,6 +40,10 @@ public class TeleportPlayer {
         return false;
     }
 
+    public static void teleportPlayer(Player from, Player to) {
+        from.teleport(to);
+    }
+
 
     private static boolean isOceanBiome(Biome biome) {
         String name = biome.name ();
