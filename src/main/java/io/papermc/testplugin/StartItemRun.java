@@ -1,6 +1,7 @@
 package io.papermc.testplugin;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -32,12 +33,16 @@ public class StartItemRun {
 
     private void setTargetItemAndPlayer() {
         String targetItem = plugin.itemGenerator.generateNextItem();
+        GeneratorScreen screen = new GeneratorScreen(plugin);
+        screen.openWheel(runner, targetItem);
         plugin.itemDetector.setTargetItem(targetItem);
         plugin.itemDetector.setPlayer(runner);
-        runner.sendMessage(Component.text(ChatColor.RED + "You must find " + targetItem + "!"));
+        runner.sendMessage(Component.text("You must find " + targetItem + "!", NamedTextColor.RED));
+
     }
 
     public void run() {
+
         this.setTargetItemAndPlayer();
         this.runnerHeadstart(10);
 
